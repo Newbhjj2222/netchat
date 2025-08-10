@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { ref, get } from 'firebase/database';
 
 function LoginPage({ onLogin, goToRegister }) {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+
+  // Check localStorage on component mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userData');
+    if (storedUser) {
+      // User data exists, call onLogin to skip login form
+      onLogin(JSON.parse(storedUser));
+    }
+  }, [onLogin]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,7 +29,9 @@ function LoginPage({ onLogin, goToRegister }) {
         const userData = snapshot.val();
         if (userData.password === password) {
           alert('Winjiye neza!');
-          onLogin(userData); // Ohereza amakuru ya user
+          // Save user data in localStorage
+          localStorage.setItem('userData', JSON.stringify(userData));
+          onLogin(userData); // Send user data to parent
         } else {
           alert('Ijambobanga si ryo.');
         }
@@ -45,7 +56,6 @@ function LoginPage({ onLogin, goToRegister }) {
           required
           style={styles.input}
         />
-
         <input
           type="password"
           placeholder="Ijambobanga"
@@ -54,12 +64,10 @@ function LoginPage({ onLogin, goToRegister }) {
           required
           style={styles.input}
         />
-
         <button type="submit" style={styles.button}>
           Injira
         </button>
       </form>
-
       <p style={styles.registerText}>
         Nta konti?{' '}
         <button onClick={goToRegister} style={styles.registerButton}>
@@ -75,7 +83,7 @@ const styles = {
     boxShadow: '4px 2px 4px 2px skyBlue',
     width: '300px',
     margin: '40% auto',
-    background: ' #A9D7E1',
+    background: '#A9D7E1',
     padding: '40px',
     border: '1px solid #ccc',
     borderRadius: '12px',
