@@ -115,7 +115,7 @@ const HomePage = ({ setActivePage, setTargetUser, currentUser }) => {
             </div>
           ))
         ) : (
-          <p className="no-users">Nta mukoresha wabonetse.</p>
+          <p className="no-users">ihangane gato tuzane abakoresha bose....</p>
         )}
       </div>
 
