@@ -123,9 +123,9 @@ function RegisterPage({ onRegister, goToLogin }) {
           required
           style={styles.input}
         >
-          <option value="">Hitamo account type</option>
+          <option value="">Hitamo ubwoko bwa account yawe.</option>
           <option value="author">Author</option>
-          <option value="writer">Writer</option>
+          <option value="writer">Umusomyi</option>
         </select>
         <input
           type="file"
