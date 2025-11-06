@@ -25,11 +25,10 @@ const Header = ({ setActivePage }) => {
 
       {menuOpen && (
         <div className="dropdown-menu">
-          <div className="menu-item" onClick={() => handleSelect("profile")}>👤 Profile</div>
           <div className="menu-item" onClick={() => handleSelect("chat")}>💬 Chat</div>
           <div className="menu-item" onClick={() => handleSelect("status")}>📷 Status</div>
           <div className="menu-item" onClick={() => handleSelect("group")}>👥 Group</div>
-          <div className="menu-item" onClick={() => handleSelect("settings")}>⚙️ Settings</div>
+          <div className="menu-item" onClick={() => handleSelect("settings")}>⚙️ profile</div>
 
           <a
             href="https://dash-nine-rho.vercel.app/"
