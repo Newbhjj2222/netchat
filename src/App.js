@@ -55,21 +55,9 @@ const App = () => {
   // Main App Layout
   return (
     <div className="app">
-    <Header />
-      <header className="header">
-        <div className="logo">NetChat</div>
-        <div className="menu">
-          <select
-            value={activePage}
-            onChange={(e) => setActivePage(e.target.value)}
-          >
-            <option value="home">Home</option>
-            <option value="chat">Chat</option>
-            <option value="status">Status</option>
-            <option value="settings">Settings</option>
-          </select>
-        </div>
-      </header>
+    <header className="header">
+  <Header setActivePage={setActivePage} activePage={activePage} />
+</header>
 
       <main className="main-content">
         {activePage === "home" && (
