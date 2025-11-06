@@ -15,6 +15,7 @@ body {
 .home-container {
   min-height: 100vh;
   padding: 1rem;
+  margin-top: 90px;
   background-color: #f3f4f6;
   position: relative;
 }
