@@ -9,11 +9,13 @@ const Header = () => {
   return (
     <header className="app-header">
       <div className="logo">NetChat</div>
+
       <input
         type="text"
         className="search-input"
         placeholder="Search chats or contacts"
       />
+
       <div className="menu-icon" onClick={toggleMenu}>☰</div>
 
       {menuOpen && (
@@ -23,6 +25,14 @@ const Header = () => {
           <div className="menu-item">📷 Status</div>
           <div className="menu-item">👥 Group</div>
           <div className="menu-item">⚙️ Settings</div>
+          <a
+            href="https://dash-nine-rho.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="menu-item"
+          >
+            🌐 NetBoard
+          </a>
         </div>
       )}
     </header>
