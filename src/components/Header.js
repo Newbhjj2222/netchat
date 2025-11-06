@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import './Header.css';
 
-const Header = () => {
+const Header = ({ setActivePage }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const handleSelect = (page) => {
+    setActivePage(page);
+    setMenuOpen(false); // ifunge dropdown
+  };
 
   return (
     <header className="app-header">
@@ -20,13 +25,12 @@ const Header = () => {
 
       {menuOpen && (
         <div className="dropdown-menu">
-          <div className="menu-item">👤 Profile</div>
-          <div className="menu-item">💬 Chat</div>
-          <div className="menu-item">📷 Status</div>
-          <div className="menu-item">👥 Group</div>
-          <div className="menu-item">⚙️ Settings</div>
+          <div className="menu-item" onClick={() => handleSelect("profile")}>👤 Profile</div>
+          <div className="menu-item" onClick={() => handleSelect("chat")}>💬 Chat</div>
+          <div className="menu-item" onClick={() => handleSelect("status")}>📷 Status</div>
+          <div className="menu-item" onClick={() => handleSelect("group")}>👥 Group</div>
+          <div className="menu-item" onClick={() => handleSelect("settings")}>⚙️ Settings</div>
 
-          {/* 🔗 NetBoard Link */}
           <a
             href="https://dash-nine-rho.vercel.app/"
             target="_blank"
