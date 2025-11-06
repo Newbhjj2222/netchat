@@ -25,11 +25,13 @@ const Header = () => {
           <div className="menu-item">📷 Status</div>
           <div className="menu-item">👥 Group</div>
           <div className="menu-item">⚙️ Settings</div>
+
+          {/* 🔗 NetBoard Link */}
           <a
             href="https://dash-nine-rho.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className="menu-item"
+            className="menu-item link-item"
           >
             🌐 NetBoard
           </a>
