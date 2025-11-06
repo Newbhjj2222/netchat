@@ -1,4 +1,4 @@
-/* Global reset and protection */
+/* Global reset */
 * {
   margin: 0;
   padding: 0;
@@ -16,14 +16,14 @@ html, body {
   max-width: 100vw;
 }
 
-/* Header Styles */
+/* Header */
 .app-header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 60px;
-  background-color: #075e54; /* WhatsApp green style */
+  background-color: #075e54;
   color: #fff;
   display: flex;
   align-items: center;
@@ -37,7 +37,6 @@ html, body {
 .logo {
   font-size: 20px;
   font-weight: bold;
-  letter-spacing: 0.5px;
 }
 
 /* Search input */
@@ -51,14 +50,12 @@ html, body {
   outline: none;
   background-color: #fff;
   color: #333;
-  min-width: 80px;
 }
 
-/* Menu icon (☰) */
+/* Menu icon */
 .menu-icon {
   font-size: 24px;
   cursor: pointer;
-  user-select: none;
   padding: 6px;
   border-radius: 6px;
   transition: background-color 0.2s ease;
@@ -73,8 +70,7 @@ html, body {
   position: absolute;
   top: 60px;
   right: 10px;
-  background-color: #075E54;
-  color: #333;
+  background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -82,14 +78,15 @@ html, body {
   animation: fadeIn 0.2s ease-in-out;
 }
 
-/* Dropdown items */
+/* Menu items (div & links) */
 .menu-item {
+  display: block;
   padding: 12px 16px;
   cursor: pointer;
   font-size: 15px;
   border-bottom: 1px solid #eee;
+  color: #333;
   text-decoration: none;
-  display: block;
 }
 
 .menu-item:last-child {
@@ -101,25 +98,21 @@ html, body {
   color: #075e54;
 }
 
-/* Mobile responsiveness */
+/* Style for the NetBoard link to stand out a bit */
+.link-item {
+  font-weight: 600;
+  color: #075e54;
+}
+
+.link-item:hover {
+  background-color: #e8f5e9;
+  color: #128c7e;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
-  .app-header {
-    flex-direction: row;
-    padding: 0 10px;
-    height: 55px;
-  }
-
-  .logo {
-    font-size: 18px;
-  }
-
   .search-input {
-    display: none; /* hide search on very small screens */
-  }
-
-  .menu-icon {
-    font-size: 26px;
-    padding: 8px;
+    display: none;
   }
 
   .dropdown-menu {
@@ -133,7 +126,7 @@ html, body {
   }
 }
 
-/* Simple fade animation */
+/* Fade-in animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
