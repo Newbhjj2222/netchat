@@ -6,6 +6,7 @@ import FooterNav from "./components/FooterNav";
 import StatusPage from "./components/StatusPage";
 import HomePage from "./components/HomePage";
 import ProfilePage from "./components/ProfilePage";
+import Header from "./components/Header";
 
 import { db } from "./firebase";
 import { ref, set, onValue } from "firebase/database";
@@ -54,6 +55,7 @@ const App = () => {
   // Main App Layout
   return (
     <div className="app">
+    <Header />
       <header className="header">
         <div className="logo">NetChat</div>
         <div className="menu">
