@@ -1,33 +1,43 @@
 import { useState, useEffect, useRef } from "react";
 import { db } from "../firebase";
-import { ref, onChildAdded, push, set, off, onValue, update } from "firebase/database";
+import { ref, onChildAdded, push, set, off, onValue } from "firebase/database";
 import { FiPaperclip } from "react-icons/fi";
 import "./ChatWindow.css";
 
 function ChatWindow({ currentUser, targetUser }) {
   const [text, setText] = useState("");
-  const [imageFile, setImageFile] = useState(null); // Base64
+  const [imageFile, setImageFile] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isTargetOnline, setIsTargetOnline] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
+  const [seenTimestamp, setSeenTimestamp] = useState(0);
+
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const isValidChat = currentUser && targetUser && currentUser.phone && targetUser.phone;
+  const isValidChat =
+    currentUser && targetUser && currentUser.phone && targetUser.phone;
+
   const chatId = isValidChat
     ? currentUser.phone < targetUser.phone
       ? `${currentUser.phone}_${targetUser.phone}`
       : `${targetUser.phone}_${currentUser.phone}`
     : null;
 
-  // Listen messages
+  // Listen to messages
   useEffect(() => {
     if (!isValidChat) return;
     const messagesRef = ref(db, `chats/${chatId}/messages`);
+
     const listener = onChildAdded(messagesRef, (snapshot) => {
       const msg = snapshot.val();
-      setMessages((prev) => (!prev.some((m) => m.timestamp === msg.timestamp) ? [...prev, msg] : prev));
+      setMessages((prev) =>
+        !prev.some((m) => m.timestamp === msg.timestamp)
+          ? [...prev, msg]
+          : prev
+      );
     });
+
     return () => off(messagesRef, "child_added", listener);
   }, [chatId, isValidChat]);
 
@@ -36,33 +46,47 @@ function ChatWindow({ currentUser, targetUser }) {
     if (!isValidChat) return;
     const lastSeenRef = ref(db, `chats/${chatId}/lastSeenBy/${currentUser.phone}`);
     set(lastSeenRef, Date.now());
-  }, [messages]);
+  }, [messages, chatId, currentUser, isValidChat]);
 
-  // Auto-scroll
+  // Auto-scroll when new message arrives
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Check target online
+  // Check if target is online
   useEffect(() => {
     if (!targetUser?.phone) return;
     const presenceRef = ref(db, `presence/${targetUser.phone}/isOnline`);
-    const unsub = onValue(presenceRef, (snap) => setIsTargetOnline(snap.val() === true));
-    return () => off(presenceRef, "value", unsub);
+    const unsubscribe = onValue(presenceRef, (snap) =>
+      setIsTargetOnline(snap.val() === true)
+    );
+    return () => off(presenceRef, "value", unsubscribe);
   }, [targetUser]);
 
-  // Mark current user as online
+  // Mark current user as online / offline
   useEffect(() => {
     if (!currentUser?.phone) return;
     const myPresenceRef = ref(db, `presence/${currentUser.phone}`);
     set(myPresenceRef, { isOnline: true });
+
     const handleDisconnect = () => set(myPresenceRef, { isOnline: false });
     window.addEventListener("beforeunload", handleDisconnect);
+
     return () => {
       handleDisconnect();
       window.removeEventListener("beforeunload", handleDisconnect);
     };
   }, [currentUser]);
+
+  // Listen to last seen of target
+  useEffect(() => {
+    if (!isValidChat) return;
+    const lastSeenByRef = ref(db, `chats/${chatId}/lastSeenBy/${targetUser.phone}`);
+    const listener = onValue(lastSeenByRef, (snap) =>
+      setSeenTimestamp(snap.val() || 0)
+    );
+    return () => off(lastSeenByRef, "value", listener);
+  }, [chatId, targetUser, isValidChat]);
 
   const handleSend = async () => {
     if (!isValidChat) return;
@@ -75,7 +99,7 @@ function ChatWindow({ currentUser, targetUser }) {
       read: false,
       timestamp: Date.now(),
       image: imageFile || null,
-      replyTo: replyTo ? { id: replyTo.id, text: replyTo.text } : null
+      replyTo: replyTo ? { id: replyTo.id, text: replyTo.text } : null,
     };
 
     const newMsgRef = push(ref(db, `chats/${chatId}/messages`));
@@ -103,17 +127,14 @@ function ChatWindow({ currentUser, targetUser }) {
     reader.readAsDataURL(file);
   };
 
-  const formatTime = (timestamp) => new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const formatTime = (timestamp) =>
+    new Date(timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
-  const lastSeenBy = ref(db, `chats/${chatId}/lastSeenBy/${targetUser.phone}`);
-  const [seenTimestamp, setSeenTimestamp] = useState(0);
-  useEffect(() => {
-    if (!isValidChat) return;
-    const listener = onValue(lastSeenBy, (snap) => setSeenTimestamp(snap.val() || 0));
-    return () => off(lastSeenBy, "value", listener);
-  }, [chatId]);
-
-  const startReply = (msg) => setReplyTo({ id: msg.timestamp, text: msg.text });
+  const startReply = (msg) =>
+    setReplyTo({ id: msg.timestamp, text: msg.text });
 
   return (
     <div className="chat-window">
@@ -123,7 +144,9 @@ function ChatWindow({ currentUser, targetUser }) {
         <>
           <div className="chat-header">
             <h3>{targetUser.username || "User"}</h3>
-            <span className={`status-dot ${isTargetOnline ? "online" : "offline"}`}>
+            <span
+              className={`status-dot ${isTargetOnline ? "online" : "offline"}`}
+            >
               {isTargetOnline ? "Online" : "Offline"}
             </span>
           </div>
@@ -139,12 +162,22 @@ function ChatWindow({ currentUser, targetUser }) {
                   onDoubleClick={() => !isSender && startReply(msg)}
                 >
                   <div className="message-bubble">
-                    {msg.replyTo && <div className="reply-preview">Reply to: {msg.replyTo.text}</div>}
-                    {msg.image && <img src={msg.image} alt="sent" className="chat-image" />}
+                    {msg.replyTo && (
+                      <div className="reply-preview">
+                        Reply to: {msg.replyTo.text}
+                      </div>
+                    )}
+                    {msg.image && (
+                      <img src={msg.image} alt="sent" className="chat-image" />
+                    )}
                     <div>{msg.text}</div>
                     <div className="message-meta">
                       <span>{formatTime(msg.timestamp)}</span>
-                      {isSender && <span className="seen-status">{isSeen ? "✓✓" : "✓"}</span>}
+                      {isSender && (
+                        <span className="seen-status">
+                          {isSeen ? "✓✓" : "✓"}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -153,7 +186,6 @@ function ChatWindow({ currentUser, targetUser }) {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Preview y'ifoto */}
           {imageFile && (
             <div className="image-preview">
               <img src={imageFile} alt="preview" />
@@ -176,7 +208,12 @@ function ChatWindow({ currentUser, targetUser }) {
               onChange={handleInputChange}
               placeholder="Andika ubutumwa..."
               rows={1}
-              style={{ height: "30px", backgroundColor: "#fff", padding: "5px", resize: "none" }}
+              style={{
+                height: "30px",
+                backgroundColor: "#fff",
+                padding: "5px",
+                resize: "none",
+              }}
             />
             <label className="image-upload-label">
               <FiPaperclip size={20} />
