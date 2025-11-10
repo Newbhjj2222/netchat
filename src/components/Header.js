@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ➕ ongeraho iyi line
 import './Header.css';
 
 const Header = ({ setActivePage }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate(); // ➕ ongeraho navigation hook
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const handleSelect = (page) => {
     setActivePage(page);
-    setMenuOpen(false); // ifunge dropdown
+    setMenuOpen(false);
+
+    if (page === "home") {
+      navigate("/"); // 👉 ujya kuri route nyamukuru
+    }
   };
 
   return (
