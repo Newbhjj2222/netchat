@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase } from "firebase/database"; // ✅ Twongeyemo Realtime Database
+import { getDatabase } from "firebase/database"; // ✅ Realtime Database
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -9,7 +8,7 @@ const firebaseConfig = {
   authDomain: "netchat-96198.firebaseapp.com",
   databaseURL: "https://netchat-96198-default-rtdb.firebaseio.com",
   projectId: "netchat-96198",
-  storageBucket: "netchat-96198.appspot.com", // ✅ Yakosowe
+  storageBucket: "netchat-96198.appspot.com",
   messagingSenderId: "328062279730",
   appId: "1:328062279730:web:9f91e036e1dd5033925c2b",
   measurementId: "G-GWKM3FMDYH"
@@ -17,5 +16,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app); // Analytics ifasha kumenya uko app ikoreshwa
-export const db = getDatabase(app);  // ✅ Realtime Database twarayohereje ngo ikoreshwe ahandi
+
+// ✅ Export Realtime Database
+export const db = getDatabase(app);
